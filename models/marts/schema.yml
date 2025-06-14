@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: dim_customer
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: string
+      - name: name
+        data_type: string
+      - name: city
+        data_type: string
+      - name: customer_sk
+        data_type: number
+      - name: signup_date
+        data_type: date
+      - name: valid_from
+        data_type: date
+      - name: valid_to
+        data_type: date
+      - name: is_current
+        data_type: boolean
+      

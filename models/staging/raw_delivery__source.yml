@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw
+    database: dbt_db
+    schema: public
+    tables:
+     - name: raw_deliveries
+       columns:
+        - name: filename
+          tests:
+            - unique
+            - not_null

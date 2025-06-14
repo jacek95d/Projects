@@ -38,5 +38,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   my_new_project:
     # Applies to all files under models/example/
-    example:
-      +materialized: table
+    staging:
+      +materialized: incremental
+      stg_deliveries:
+        unique_key: filename
+    marts:
+      +materialized: incremental
+      +on_schema_change: append_new_columns
+      dim_customers:
+        unique_key: id
+        incremental_strategy: merge
+      
+      
