@@ -40,6 +40,7 @@ models:
     # Applies to all files under models/example/
     staging:
       +materialized: incremental
+      +on_schema_change: append_new_columns
       stg_deliveries:
         unique_key: filename
     marts:

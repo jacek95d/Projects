@@ -13,7 +13,7 @@ models:
       - name: city
         data_type: string
       - name: customer_sk
-        data_type: number
+        data_type: string
       - name: signup_date
         data_type: date
       - name: valid_from
