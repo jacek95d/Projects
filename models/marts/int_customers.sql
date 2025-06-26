@@ -1,25 +1,34 @@
+-- models/int_customers.sql
 {{ config(
     materialized='incremental',
-    unique_key='customer_id'
+    unique_key='customer_id',
+    incremental_strategy='merge'
 ) }}
 
-WITH ranked AS (
-    SELECT *,
-           ROW_NUMBER() OVER (
-               PARTITION BY customer_id
-               ORDER BY load_time DESC
-           ) AS row_num
-    FROM {{ ref('stg_deliveries') }}
-    {% if is_incremental() %}
-      WHERE load_time >= (SELECT MAX(load_time) FROM {{ this }})
-    {% endif %}
-)
+with ranked as (
 
-SELECT
+  select
     customer_id,
     customer_name,
     customer_city,
     customer_signup_date,
-    load_time
-FROM ranked
-WHERE row_num = 1
+    load_time,
+    row_number() over (
+      partition by customer_id
+      order by load_time desc
+    ) as rn
+    {% if is_incremental() %}
+    where load_time > (select max(load_time) from {{ this }})
+  {% endif %}
+  from {{ ref('stg_deliveries') }}
+
+)
+
+select
+  customer_id,
+  customer_name,
+  customer_city,
+  customer_signup_date,
+  load_time
+from ranked
+where rn = 1
