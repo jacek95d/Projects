@@ -49,5 +49,10 @@ models:
       dim_customers:
         unique_key: id
         incremental_strategy: merge
+      dim_customers_ss:
+        +materialized: table
+     
+
+
       
       
