@@ -1,11 +1,19 @@
 -- models/int_customers.sql
 {{ config(
-    materialized='incremental',
-    unique_key='customer_id',
-    incremental_strategy='merge'
+    materialized          = 'incremental',
+    unique_key            = 'customer_id',
+    incremental_strategy  = 'merge'
 ) }}
 
-with ranked as (
+with raw_increments as (
+
+  select *
+  from {{ ref('stg_deliveries') }}
+  {% if is_incremental() %}
+    where load_time > (select max(load_time) from {{ this }})
+  {% endif %}
+
+), ranked as (
 
   select
     customer_id,
@@ -17,10 +25,7 @@ with ranked as (
       partition by customer_id
       order by load_time desc
     ) as rn
-    {% if is_incremental() %}
-    where load_time > (select max(load_time) from {{ this }})
-  {% endif %}
-  from {{ ref('stg_deliveries') }}
+  from raw_increments
 
 )
 
